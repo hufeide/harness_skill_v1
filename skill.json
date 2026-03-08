@@ -1,0 +1,82 @@
+{
+  "name": "harness_skill",
+  "description": "Harness engineer 风格的 Claude 项目自动化 skill",
+  "version": "2.0.0",
+  "author": "fei",
+  "tags": ["claude", "automation", "harness-engineer", "skill", "mcp", "github", "docs"],
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read",
+      "Write",
+      "Edit",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "ask": [
+      "Bash(rm -rf *)"
+    ]
+  },
+  "config": {
+    "env_file": "./config/env.json",
+    "project_structure_file": "./config/project_structure.json"
+  },
+  "plugins": {
+    "skills": [
+      "brainstorming",
+      "writing-plans",
+      "test-driven-development",
+      "systematic-debugging",
+      "using-git-worktrees",
+      "requesting-code-review",
+      "verification-before-completion",
+      "subagent-driven-development",
+      "finishing-a-development-branch",
+      "guide",
+      "andrew-kane-gem-writer",
+      "create-agent-skills",
+      "frontend-design",
+      "git-worktree",
+      "skill-creator"
+    ],
+    "mcp": [
+      "mongodb-mcp-server",
+      "playwright-mcp",
+      "vercel-mcp"
+    ],
+    "compound-engineering": "@EveryInc/every-marketplace/compound-engineering"
+  },
+  "hooks": {
+    "pre_commit": "~/.claude/hooks/pre_commit",
+    "post_commit": "~/.claude/hooks/post_commit",
+    "update-docs-after-milestone": "./scripts/update_docs.sh",
+    "create-github-issues": "./scripts/create_issues.sh"
+  },
+  "scripts": {
+    "setup": "./scripts/setup_plugins.sh",
+    "setup-hooks": "./scripts/setup_hooks.sh",
+    "check": "./scripts/check_setup.sh",
+    "update-docs": "./scripts/update_docs.sh",
+    "create-issues": "./scripts/create_issues.sh"
+  },
+  "workflow": {
+    "planning": ["todolist", "research", "plan", "implement", "test"],
+    "execution": ["github-issue-driven", "multiple-claude-windows", "git-worktrees-shared-history"],
+    "experience": ["use-best-model", "update-claude.md", "prevent-feature-regression"]
+  },
+  "claude_docs": {
+    "claude.md": {
+      "project_architecture": true,
+      "ux_ui_guidelines": true,
+      "constraints": ["禁止违规操作"],
+      "pr_scenarios": ["PR", "直接合并"],
+      "background_docs": [
+        "architecture.md",
+        "change.log",
+        "project_status.md",
+        "core_feature_reference.md"
+      ],
+      "auto_update_after_milestones": true
+    }
+  }
+}
