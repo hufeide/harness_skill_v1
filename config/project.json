@@ -1,0 +1,13 @@
+{
+  "github": {
+    "user": "/home/aixz/data/hxf/bigmodel/ai_code/harness_example_1",
+    "repo": ":harness_skill",
+    "url": "https://github.com//home/aixz/data/hxf/bigmodel/ai_code/harness_example_1/:harness_skill",
+    "token": ""
+  },
+  "project": {
+    "name": ":harness_skill",
+    "description": "我的项目",
+    "default_branch": "main"
+  }
+}

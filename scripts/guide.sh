@@ -69,6 +69,25 @@ get_stage_activity() {
     esac
 }
 
+# 检查是否有源代码
+has_source_code() {
+    local has_code=false
+
+    # 检查 src 目录
+    if [ -d "$PROJECT_ROOT/src" ]; then
+        if [ -n "$(find $PROJECT_ROOT/src -type f \( -name '*.js' -o -name '*.ts' -o -name '*.py' -o -name '*.rb' -o -name '*.jsx' -o -name '*.tsx' -o -name '*.html' -o -name '*.css' -o -name '*.vue' -o -name '*.svelte' \) 2>/dev/null)" ]; then
+            has_code=true
+        fi
+    fi
+
+    # 检查根目录
+    if [ "$has_code" = false ] && [ -n "$(find $PROJECT_ROOT -maxdepth 1 -type f \( -name '*.js' -o -name '*.html' -o -name '*.css' -o -name '*.py' -o -name '*.rb' \) 2>/dev/null)" ]; then
+        has_code=true
+    fi
+
+    echo "$has_code"
+}
+
 # 显示当前状态
 show_status() {
     echo -e "${BLUE}════════════════════════════════════════════════════════${NC}"
@@ -91,7 +110,19 @@ show_status() {
     echo -e "最近提交：${GREEN}$(git log -1 --oneline 2>/dev/null || echo '无')${NC}"
     echo ""
 
-    # 如果是 verify 或 completed 阶段，自动更新 README
+    # 如果有源代码且 README 存在，检查是否需要更新
+    local has_code=$(has_source_code)
+    if [ "$has_code" = "true" ] && [ -f "$PROJECT_ROOT/README.md" ]; then
+        # 检查 README 是否是默认模板
+        if grep -q "项目名称" "$PROJECT_ROOT/README.md" 2>/dev/null; then
+            if [ -f "$SCRIPT_DIR/update_readme.sh" ]; then
+                echo -e "${BLUE}更新项目文档...${NC}"
+                bash "$SCRIPT_DIR/update_readme.sh"
+            fi
+        fi
+    fi
+
+    # 如果是 verify 或 completed 阶段，也更新 README
     if [ "$stage" = "verify" ] || [ "$stage" = "ready" ] || [ "$stage" = "completed" ]; then
         if [ -f "$SCRIPT_DIR/update_readme.sh" ]; then
             echo -e "${BLUE}更新项目文档...${NC}"

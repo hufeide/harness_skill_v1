@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash:*",
+      "Filesystem:*",
+      "Git:*",
+      "Network:*",
+      "Search:*",
+      "Edit:*",
+      "Read:*",
+      "Write:*",
+      "Create:*",
+      "Run:*"
+    ],
+    "deny": [
+      "Bash:rm",
+      "Bash:rm *",
+      "Bash:rm -rf",
+      "Bash:rm -rf *",
+      "Bash:sudo rm",
+      "Bash:sudo rm -rf"
+    ]
+  },
+  "Bash": {
+    "allowAll": true,
+    "denyCommands": [
+      "rm",
+      "rm -rf",
+      "sudo rm",
+      "sudo rm -rf"
+    ]
+  },
+  "filesystem": {
+    "allowWrite": true,
+    "allowDelete": false
+  },
+  "git": {
+    "allowAll": true
+  },
+  "network": {
+    "allowAll": true
+  },
+  "security": {
+    "requireConfirmation": false,
+    "sandbox": false
+  }
+}
