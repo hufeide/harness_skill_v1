@@ -61,7 +61,17 @@ GIT_EMAIL=$(git config user.email 2>/dev/null || echo "")
 DEFAULT_GH_USER="hufeide"
 
 # 从参数或环境变量获取，或使用 git config 的值，最后使用默认值
-GH_USER="${1:-$GITHUB_USER:-$GIT_USER:-$DEFAULT_GH_USER}"
+# 注意：需要显式检查空字符串，因为 ${var:-default} 在 var 为空字符串时不会使用 default
+if [ -n "$1" ]; then
+    GH_USER="$1"
+elif [ -n "$GITHUB_USER" ]; then
+    GH_USER="$GITHUB_USER"
+elif [ -n "$GIT_USER" ]; then
+    GH_USER="$GIT_USER"
+else
+    GH_USER="$DEFAULT_GH_USER"
+fi
+
 if [ -z "$GH_USER" ]; then
     echo -e "${BLUE}检测到 Git 用户信息:${NC}"
     echo "  用户名：$GIT_USER"
@@ -85,8 +95,12 @@ echo ""
 
 # 获取项目名
 CURRENT_DIR=$(basename "$PROJECT_ROOT")
-PROJECT_NAME="${2:-$PROJECT_NAME:$CURRENT_DIR}"
-if [ -z "$PROJECT_NAME" ]; then
+# 同样需要显式检查，避免空字符串问题
+if [ -n "$2" ]; then
+    PROJECT_NAME="$2"
+elif [ -n "$PROJECT_NAME" ]; then
+    PROJECT_NAME="$PROJECT_NAME"
+else
     PROJECT_NAME="$CURRENT_DIR"
 fi
 
