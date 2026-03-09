@@ -1,6 +1,6 @@
-# Claude 技能库 - 智能开发引导系统
+# Harness Skill（Claude 技能库）- 智能开发引导系统
 
-> 让 Claude 成为你的开发伙伴，提供智能引导和自动化工作流
+> 让 Claude 成为你的开发伙伴：项目初始化、状态追踪、下一步建议、以及常用工程最佳实践的自动化
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/yourusername/harness_skill)
@@ -14,20 +14,20 @@
 - ✅ **最佳实践内置**：TDD开发、代码审查、Git工作流一应俱全
 - ✅ **自然语言驱动**：完全不用记命令，用自然语言就能操作
 
-## 5分钟快速开始
+## 5 分钟快速开始
 
 ```bash
-# 1. 克隆项目
-git clone https://github.com/yourusername/harness_skill.git
-cd harness_skill
+# 1) 安装到本机的 Claude skills 目录（推荐）
+git clone <your_repo_url> ~/.claude/skills/harness_skill
 
-# 2. 一键快速开始
-bash scripts/quickstart.sh
+# 2) 在你的“业务项目目录”中执行初始化（重要：不要在 skill 目录里运行）
+cd /path/to/your/project
+bash ~/.claude/skills/harness_skill/scripts/init_project.sh
 
-# 3. 在Claude中说"我迷路了"，开始你的开发之旅
+# 3) 在 Claude 中说“我迷路了”，开始你的开发之旅
 ```
 
-就这么简单！🎉
+就这么简单！
 
 ## 核心功能
 
@@ -99,7 +99,7 @@ cp -r templates/python-project/* your-project/
 cp -r templates/ruby-project/* your-project/
 ```
 
-## 配置
+## 配置（推荐）
 
 首次使用需要配置环境变量：
 
