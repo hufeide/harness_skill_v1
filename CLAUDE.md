@@ -15,6 +15,203 @@
 
 ---
 
+## ⚠️ 重要提醒
+
+### 完成每个阶段后必须更新状态
+
+为了正确追踪项目进度，**每完成一个阶段都要立即更新状态**：
+
+| 阶段 | 完成后立即运行 |
+|------|---------------|
+| 需求分析 | `bash scripts/brainstorm_complete.sh` |
+| 任务规划 | `bash scripts/update_state.sh update tasks "任务规划完成"` |
+| 功能开发 | `bash scripts/update_state.sh update development "完成 <功能名>"` |
+| 开发完成 | `bash scripts/dev_complete.sh` |
+| 测试通过 | `bash scripts/update_state.sh update verify "测试通过"` |
+
+**为什么重要？**
+- ✅ 保持 `.guide_history` 记录完整
+- ✅ 准确追踪项目进度
+- ✅ 自动显示下一步操作
+- ✅ 便于回顾开发过程
+
+---
+
+## 文件组织规范
+
+### 代码文件位置
+
+- **源代码**: `src/`
+  - Python: `src/*.py`
+  - JavaScript/TypeScript: `src/*.js`, `src/*.ts`
+  - Ruby: `src/*.rb`
+
+- **测试文件**: `tests/`
+  - Python: `tests/test_*.py`
+  - JavaScript: `tests/*.test.js`
+  - Ruby: `tests/*_spec.rb`
+
+- **配置文件**: 项目根目录
+  - `requirements.txt`, `package.json`, `Gemfile`
+
+- **文档**: `docs/`
+  - 设计文档: `docs/plans/`
+  - 决策记录: `docs/decisions/`
+
+### 创建文件时的注意事项
+
+使用 `fsWrite` 创建文件时，请确保：
+1. 源代码文件放在 `src/` 目录
+2. 测试文件放在 `tests/` 目录
+3. 使用相对于项目根目录的路径
+
+示例：
+```
+✅ 正确: src/app.py
+❌ 错误: app.py
+
+✅ 正确: tests/test_app.py
+❌ 错误: test_app.py
+```
+
+---
+
+## 开发工作流程
+
+### 1. 需求分析 (/brainstorming)
+
+完成 `/brainstorming` 后，**立即运行**：
+
+```bash
+bash scripts/brainstorm_complete.sh
+```
+
+这会自动：
+- ✅ 更新 `.guide_history` 记录
+- ✅ 更新项目状态为 "planning"
+- ✅ 提示创建设计文档
+- ✅ 提供设计文档模板
+- ✅ 显示下一步操作
+
+**或者手动执行**：
+
+1. 更新状态：
+   ```bash
+   bash scripts/update_state.sh update planning "完成需求分析"
+   ```
+
+2. 创建设计文档：
+   ```bash
+   # 文件名格式：YYYY-MM-DD-<topic>-design.md
+   touch docs/plans/$(date +%Y-%m-%d)-<feature-name>-design.md
+   ```
+
+3. 在设计文档中记录：
+   - 需求概述
+   - 技术方案
+   - 架构设计
+   - 实施计划
+
+### 2. 创建计划 (/writing-plans)
+
+完成 `/writing-plans` 后，**立即运行**：
+
+```bash
+bash scripts/update_state.sh update tasks "任务规划完成"
+```
+
+这会：
+- ✅ 更新 `.guide_history` 记录
+- ✅ 更新项目状态为 "tasks"
+
+开始开发前确认：
+- [ ] 设计文档已创建
+- [ ] 任务列表已生成
+- [ ] 技术方案已确定
+- [ ] 状态已更新
+
+### 3. 功能开发
+
+开发过程中：
+
+1. **确保文件位置正确**
+   - 源代码 → `src/`
+   - 测试代码 → `tests/`
+
+2. **定期更新状态**
+   ```bash
+   bash scripts/update_state.sh update development "实现 <功能名称>"
+   ```
+
+3. **遵循 TDD 流程**
+   - 先写测试
+   - 实现功能
+   - 重构代码
+
+### 4. 开发完成
+
+完成代码编写后，运行：
+
+```bash
+bash scripts/dev_complete.sh
+```
+
+这会：
+- 更新项目状态为 "testing"
+- 显示测试命令
+- 提醒测试覆盖率目标
+- 提示下一步操作
+
+### 5. 测试验证
+
+1. **运行测试**
+   ```bash
+   # Python
+   pytest tests/ -v
+   pytest tests/ --cov=src --cov-report=html
+   
+   # Node.js
+   npm test
+   npm test -- --coverage
+   
+   # Ruby
+   bundle exec rspec
+   ```
+
+2. **检查覆盖率**
+   - 总体覆盖率：> 80%
+   - 核心功能：> 90%
+
+3. **修复失败的测试**
+   - 如果测试失败，修复代码
+   - 重新运行测试直到全部通过
+
+4. **更新状态**
+   ```bash
+   bash scripts/update_state.sh update verify "测试通过"
+   ```
+
+### 6. 代码审查
+
+```
+/requesting-code-review
+```
+
+### 7. 完成验证
+
+```
+/verification-before-completion
+```
+
+### 8. 提交代码
+
+```bash
+git add .
+git commit -m "feat: <功能描述>"
+```
+
+---
+
 ## 快速参考
 
 ### 用户说什么时自动响应

@@ -314,6 +314,329 @@ check_command jq  # 如果脚本使用 jq
 
 ---
 
+### 🐛 Bug #8: 需求分析后没有自动生成 plan 文件
+
+**严重程度**：🟡 中
+
+**问题描述**：
+- 使用 `/brainstorming` 完成需求分析后
+- 没有自动在 `docs/plans/` 目录下生成设计文档
+- 用户需要手动创建 plan 文件
+
+**影响**：
+- 工作流程不连贯
+- 设计文档可能丢失
+- 不符合最佳实践
+
+**建议修复**：
+在 CLAUDE.md 中添加提示：
+
+```markdown
+## 工作流程规范
+
+### 需求分析后的操作
+
+完成 `/brainstorming` 后，请：
+
+1. 创建设计文档：
+   ```bash
+   # 文件名格式：YYYY-MM-DD-<topic>-design.md
+   touch docs/plans/$(date +%Y-%m-%d)-<feature-name>-design.md
+   ```
+
+2. 在设计文档中记录：
+   - 需求概述
+   - 技术方案
+   - 架构设计
+   - 实施计划
+
+3. 运行 `/writing-plans` 生成详细任务列表
+```
+
+**状态**：⏳ 待修复
+
+---
+
+### 🐛 Bug #9: 代码文件创建位置错误
+
+**严重程度**：🔴 高
+
+**问题描述**：
+- 开发过程中创建的代码文件
+- 被放在项目根目录而不是 `src/` 目录
+- 导致项目结构混乱
+
+**重现步骤**：
+1. 运行 `/brainstorming` 和 `/writing-plans`
+2. 开始编写代码
+3. 使用 `fsWrite` 创建文件时，如果路径不正确
+4. 文件会被创建到错误的位置
+
+**影响**：
+- 项目结构混乱
+- 不符合最佳实践
+- 需要手动移动文件
+
+**建议修复**：
+在 CLAUDE.md 中明确说明文件组织规范：
+
+```markdown
+## 文件组织规范
+
+### 代码文件位置
+
+- **源代码**: `src/`
+  - Python: `src/*.py`
+  - JavaScript/TypeScript: `src/*.js`, `src/*.ts`
+  - Ruby: `src/*.rb`
+
+- **测试文件**: `tests/`
+  - Python: `tests/test_*.py`
+  - JavaScript: `tests/*.test.js`
+  - Ruby: `tests/*_spec.rb`
+
+- **配置文件**: 项目根目录
+  - `requirements.txt`, `package.json`, `Gemfile`
+
+- **文档**: `docs/`
+  - 设计文档: `docs/plans/`
+  - 决策记录: `docs/decisions/`
+
+### 创建文件时的注意事项
+
+使用 `fsWrite` 创建文件时，请确保：
+1. 源代码文件放在 `src/` 目录
+2. 测试文件放在 `tests/` 目录
+3. 使用相对于项目根目录的路径
+
+示例：
+```
+✅ 正确: src/app.py
+❌ 错误: app.py
+
+✅ 正确: tests/test_app.py
+❌ 错误: test_app.py
+```
+```
+
+**状态**：⏳ 待修复
+
+---
+
+### 🐛 Bug #10: 开发完成后不更新 .guide_history
+
+**严重程度**：🟡 中
+
+**问题描述**：
+- 完成功能开发后
+- `.guide_history` 文件没有自动更新
+- 无法追踪开发进度
+
+**影响**：
+- 项目历史记录不完整
+- 无法回顾开发过程
+- 状态追踪不准确
+
+**建议修复**：
+在 CLAUDE.md 中添加开发完成后的检查清单：
+
+```markdown
+## 开发完成检查清单
+
+每次完成一个功能后，请执行：
+
+1. 更新项目状态：
+   ```bash
+   bash scripts/update_state.sh update development "完成 <功能名称>"
+   ```
+
+2. 提交代码：
+   ```bash
+   git add .
+   git commit -m "feat: <功能描述>"
+   ```
+
+3. 运行测试：
+   ```bash
+   # Python
+   pytest tests/
+   
+   # JavaScript
+   npm test
+   
+   # Ruby
+   bundle exec rspec
+   ```
+
+4. 更新文档：
+   ```bash
+   bash scripts/update_docs.sh
+   ```
+```
+
+或者创建自动化脚本 `scripts/complete_feature.sh`：
+
+```bash
+#!/bin/bash
+# 功能完成自动化脚本
+
+FEATURE_NAME="$1"
+
+if [ -z "$FEATURE_NAME" ]; then
+    echo "用法: $0 <功能名称>"
+    exit 1
+fi
+
+# 更新状态
+bash scripts/update_state.sh update development "完成 $FEATURE_NAME"
+
+# 提示运行测试
+echo ""
+echo "════════════════════════════════════════════════════════"
+echo "  下一步：运行测试"
+echo "════════════════════════════════════════════════════════"
+echo ""
+echo "请运行测试以验证功能："
+echo ""
+echo "  Python:     pytest tests/"
+echo "  JavaScript: npm test"
+echo "  Ruby:       bundle exec rspec"
+echo ""
+```
+
+**状态**：⏳ 待修复
+
+---
+
+### 🐛 Bug #11: 开发完成后没有测试提醒
+
+**严重程度**：🟡 中
+
+**问题描述**：
+- 完成代码编写后
+- 系统没有提醒用户运行测试
+- 可能导致未测试的代码被提交
+
+**影响**：
+- 代码质量无法保证
+- 可能引入 bug
+- 不符合 TDD 最佳实践
+
+**建议修复**：
+创建 `scripts/dev_complete.sh` 脚本：
+
+```bash
+#!/bin/bash
+# 开发完成提醒脚本
+
+echo ""
+echo "╔════════════════════════════════════════════════════════╗"
+echo "║                                                        ║"
+echo "║     🎉 功能开发完成！                                  ║"
+echo "║                                                        ║"
+echo "╚════════════════════════════════════════════════════════╝"
+echo ""
+
+# 更新状态
+bash scripts/update_state.sh update testing "等待测试验证"
+
+echo "════════════════════════════════════════════════════════"
+echo "  下一步：测试验证"
+echo "════════════════════════════════════════════════════════"
+echo ""
+
+# 检测项目类型并给出相应的测试命令
+if [ -f "requirements.txt" ]; then
+    echo "Python 项目 - 运行测试："
+    echo "  pytest tests/ -v"
+    echo "  pytest tests/ --cov=src --cov-report=html"
+    echo ""
+elif [ -f "package.json" ]; then
+    echo "Node.js 项目 - 运行测试："
+    echo "  npm test"
+    echo "  npm test -- --coverage"
+    echo ""
+elif [ -f "Gemfile" ]; then
+    echo "Ruby 项目 - 运行测试："
+    echo "  bundle exec rspec"
+    echo "  bundle exec rspec --format documentation"
+    echo ""
+fi
+
+echo "测试通过后，请运行："
+echo "  bash scripts/update_state.sh update verify '测试通过'"
+echo "  /verification-before-completion"
+echo ""
+
+# 显示测试覆盖率目标
+echo "════════════════════════════════════════════════════════"
+echo "  测试覆盖率目标"
+echo "════════════════════════════════════════════════════════"
+echo ""
+echo "  总体覆盖率：> 80%"
+echo "  核心功能：  > 90%"
+echo ""
+```
+
+在 CLAUDE.md 中添加：
+
+```markdown
+## 开发完成后的流程
+
+### 自动提醒
+
+完成代码编写后，运行：
+```bash
+bash scripts/dev_complete.sh
+```
+
+这会：
+1. 更新项目状态为 "testing"
+2. 显示测试命令
+3. 提醒测试覆盖率目标
+4. 提示下一步操作
+
+### 手动流程
+
+如果没有运行自动脚本，请按以下步骤操作：
+
+1. **运行测试**
+   ```bash
+   # 根据项目类型选择
+   pytest tests/          # Python
+   npm test              # Node.js
+   bundle exec rspec     # Ruby
+   ```
+
+2. **检查覆盖率**
+   ```bash
+   pytest tests/ --cov=src --cov-report=html
+   ```
+
+3. **修复失败的测试**
+   - 如果测试失败，修复代码
+   - 重新运行测试直到全部通过
+
+4. **更新状态**
+   ```bash
+   bash scripts/update_state.sh update verify "测试通过"
+   ```
+
+5. **代码审查**
+   ```
+   /requesting-code-review
+   ```
+
+6. **完成验证**
+   ```
+   /verification-before-completion
+   ```
+```
+
+**状态**：⏳ 待修复
+
+---
+
 ## 测试通过的功能
 
 ### ✅ 正常工作的脚本
