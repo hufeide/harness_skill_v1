@@ -15,7 +15,27 @@ NC='\033[0m'
 
 # 获取脚本所在目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# PROJECT_ROOT 使用当前工作目录（用户项目目录），而不是脚本目录
 PROJECT_ROOT="$(pwd)"
+
+# 确保在项目目录运行（而不是技能目录）
+# 检查当前目录是否有项目配置文件，如果没有，提示用户切换到项目目录
+if [ ! -f "$PROJECT_ROOT/.git" ] && [ ! -d "$PROJECT_ROOT/.git" ]; then
+    # 尝试检测是否在技能目录
+    if echo "$PROJECT_ROOT" | grep -q ".claude/skills"; then
+        echo -e "${RED}错误：在技能目录运行！${NC}"
+        echo ""
+        echo -e "${YELLOW}请在你的项目目录运行此脚本：${NC}"
+        echo ""
+        echo "  1. 切换到你的项目目录"
+        echo "     cd /path/to/your/project"
+        echo ""
+        echo "  2. 然后运行初始化"
+        echo "     /harness_skill 初始化和引导"
+        echo ""
+        exit 1
+    fi
+fi
 
 echo ""
 echo -e "${CYAN}"
